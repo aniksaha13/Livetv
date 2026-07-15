@@ -1,35 +1,14 @@
-/* =======================================================
-   ১. গ্লোবাল রিসেট এবং বেসিক স্টাইল
-   ======================================================= */
-* { 
-    margin: 0; 
-    padding: 0; 
-    box-sizing: border-box; 
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #000; color: #fff; font-family: 'Segoe UI', sans-serif; overflow: hidden; user-select: none; }
 
-body { 
-    background: #020b14; 
-    color: #fff; 
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
-    overflow: hidden; 
-    user-select: none; 
-}
+.player-wrapper { position: relative; width: 100vw; height: 100vh; background: #000; }
 
-.player-wrapper { 
-    position: relative; 
-    width: 100vw; 
-    height: 100vh; 
-    background: #000; 
-}
-
-/* মোবাইল টপ হেডার (ডেস্কটপ ও টিভিতে হাইড থাকবে) */
+/* টপ হেডার (ডিপার্টমেন্টাল ডেস্কটপে হাইড) */
 .mobile-top-header {
     display: none;
 }
 
-/* =======================================================
-   ২. ভিডিও প্লেয়ার কন্টেইনার এবং কন্ট্রোলস
-   ======================================================= */
+/* ভিডিও কন্টেইনার */
 .video-container {
     width: 100%;
     height: 100%;
@@ -44,403 +23,144 @@ video {
     background: #000; 
 } 
 
+/* মোবাইল ফুলস্ক্রিন বাটন */
 .mobile-fs-btn {
     display: none;
+    transition: opacity 0.4s, visibility 0.4s;
 }
 
-/* =======================================================
-   Normal / Full / Fit - একটিমাত্র মোড টগল বাটন (ডেস্কটপ/টিভি)
-   ======================================================= */
-.mode-toggle-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(0, 153, 255, 0.12);
-    border: 1px solid rgba(0, 153, 255, 0.35);
-    color: #fff;
-    font-size: 13px;
-    font-weight: 700;
-    padding: 8px 16px;
-    border-radius: 20px;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: all 0.25s ease;
-}
-.mode-toggle-btn i {
-    font-size: 15px;
-    color: #09f;
-    transition: transform 0.35s ease, color 0.25s ease;
-}
-.mode-toggle-btn span {
-    font-size: 12px;
-    letter-spacing: 0.3px;
-}
-.mode-toggle-btn:hover {
-    background: #09f;
-    box-shadow: 0 0 14px rgba(0, 153, 255, 0.55);
-}
-.mode-toggle-btn:hover i {
-    color: #fff;
-}
-.mode-toggle-btn:active i {
-    transform: scale(0.82) rotate(12deg);
-}
-
-/* মোবাইলে ভিডিওর উপরে ভাসমান গোল মোড টগল বাটন */
-.mobile-mode-toggle-btn {
-    display: none;
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    z-index: 9;
-    width: 40px;
-    height: 40px;
-    align-items: center;
-    justify-content: center;
-    background: rgba(3, 14, 24, 0.85);
-    border: 1px solid rgba(0, 153, 255, 0.35);
-    border-radius: 50%;
-    color: #fff;
-    font-size: 16px;
-    cursor: pointer;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
-    transition: all 0.25s ease, opacity 0.4s, visibility 0.4s;
-}
-.mobile-mode-toggle-btn i {
-    transition: transform 0.35s ease;
-}
-.mobile-mode-toggle-btn:active {
-    background: #09f;
-    transform: scale(0.92);
-}
-.mobile-mode-toggle-btn:active i {
-    transform: scale(0.85) rotate(12deg);
-}
-
-/* =======================================================
-   এরর মেসেজ - ভিডিও প্লেয়ারের ভেতরে কার্ড
-   ======================================================= */
-.error-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(2, 11, 20, 0.55);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 8;
-    padding: 16px;
-}
-
-.error-card {
-    position: relative;
-    width: 100%;
-    max-width: 260px;
-    background: rgba(4, 18, 31, 0.96);
-    border: 1px solid rgba(0, 153, 255, 0.35);
-    border-radius: 14px;
-    padding: 18px 16px 16px;
-    text-align: center;
-    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.45);
-    backdrop-filter: blur(10px);
-}
-
-.error-card i.fa-triangle-exclamation {
-    font-size: 26px;
-    color: #ffb020;
-    margin-bottom: 8px;
-    display: inline-block;
-}
-
-.error-card h3 {
-    font-size: 13px;
-    font-weight: 800;
-    color: #fff;
-    margin-bottom: 6px;
-    line-height: 1.3;
-}
-
-.error-card p {
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.7);
-    margin-bottom: 12px;
-    line-height: 1.4;
-}
-
-.close-error-btn {
-    position: absolute;
-    top: 6px;
-    right: 8px;
-    background: none;
-    border: none;
-    color: rgba(255, 255, 255, 0.55);
-    font-size: 18px;
-    line-height: 1;
-    cursor: pointer;
-}
-.close-error-btn:hover { color: #fff; }
-
-.wa-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: #17d366;
-    color: #fff;
-    text-decoration: none;
-    font-size: 11px;
-    font-weight: 700;
-    padding: 8px 14px;
-    border-radius: 20px;
-    transition: background 0.2s;
-}
-.wa-btn:hover { background: #14b859; }
-
-.animate-bounce {
-    animation: errorIconBounce 1.4s ease-in-out infinite;
-}
-@keyframes errorIconBounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-4px); }
-}
-
-/* ফুলস্ক্রিন মোড লজিক */
+/* ফুলস্ক্রিন চলাকালীন শুধুমাত্র টপ হেডার ও ফুলস্ক্রিন বাটন হাইড থাকবে */
 #playerWrapper:fullscreen .mobile-top-header,
 #playerWrapper:-webkit-full-screen .mobile-top-header {
     display: none !important;
 }
-
-.bottom-right-controls {
-    position: absolute; 
-    bottom: 30px; 
-    right: 30px;
-    display: flex; 
-    align-items: center; 
-    gap: 15px; 
-    z-index: 10;
-    background: rgba(3, 14, 24, 0.85); 
-    padding: 12px 22px; 
-    border-radius: 30px;
-    backdrop-filter: blur(10px); 
-    border: 1px solid rgba(0, 153, 255, 0.2);
-    transition: opacity 0.4s ease, visibility 0.4s ease;
+#playerWrapper:fullscreen .mobile-fs-btn,
+#playerWrapper:-webkit-full-screen .mobile-fs-btn {
+    display: none !important;
 }
 
-.hidden { 
-    opacity: 0; 
-    visibility: hidden; 
-    pointer-events: none; 
-}
-
-input[type=range] { 
-    accent-color: #09f; 
-    cursor: pointer; 
-}
-
-.icon-btn { 
-    color: white; 
-    cursor: pointer; 
-    font-size: 22px; 
-    background: none; 
-    border: none; 
-    transition: transform 0.2s; 
-}
-.icon-btn:hover { 
-    color: #09f; 
-    transform: scale(1.1); 
-}
-
-/* =======================================================
-   ৩. সাইডবার, সার্চবার এবং চ্যানেল কার্ড ডিজাইন (PC ও TV মোড)
-   ======================================================= */
+/* সাধারণ সাইডবার স্টাইল (ডেস্কটপ, টিভি এবং ল্যান্ডস্কেপ মোড) */
 .sidebar { 
     position: absolute; 
     left: 20px; 
     top: 50%; 
     transform: translateY(-50%);
-    width: 320px; 
-    height: 85vh; 
-    background: rgba(4, 18, 31, 0.85);
+    width: 260px; 
+    height: 80vh; 
+    background: rgba(0, 0, 0, 0.85);
     backdrop-filter: blur(25px); 
-    border-radius: 16px; 
-    border: 1.5px solid #09f; 
+    border-radius: 14px; 
+    border: 1.5px solid #ff0000; 
     padding: 15px; 
     z-index: 10; 
     display: flex; 
     flex-direction: column; 
-    box-shadow: 0 10px 30px rgba(0, 153, 255, 0.25);
-    transition: opacity 0.4s ease, visibility 0.4s ease, transform 0.4s ease;
-}
-
-.sidebar.hidden {
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-50%) translateX(-20px);
-    pointer-events: none;
+    transition: opacity 0.4s, visibility 0.4s;
 }
 
 .sidebar-title {
-    font-size: 19px; 
+    font-size: 18px; 
     font-weight: 800; 
     color: #fff; 
-    margin-bottom: 12px; 
+    text-align: left;
+    margin-bottom: 15px; 
+    border-bottom: 1px solid rgba(255,255,255,0.1); 
     padding-bottom: 8px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 }
-.sidebar-title i { 
-    color: #09f; 
-}
+.sidebar-title i { color: #ff0000; }
 
-.search-box-container {
-    position: relative;
-    margin-bottom: 15px;
-    width: 100%;
-}
-.search-box-container input {
-    width: 100%;
-    padding: 10px 12px 10px 38px;
-    background: rgba(255, 255, 255, 0.07);
-    border: 1px solid rgba(0, 153, 255, 0.3);
-    border-radius: 8px;
-    color: #fff;
-    font-size: 14px;
-    outline: none;
-}
-.search-box-container input:focus {
-    border-color: #09f;
-}
-.search-box-container .search-icon {
-    position: absolute;
-    left: 14px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: rgba(255, 255, 255, 0.5);
-}
-
-.channel-container { 
-    overflow-y: auto; 
-    flex-grow: 1; 
-}
-.channel-container::-webkit-scrollbar { width: 5px; }
-.channel-container::-webkit-scrollbar-thumb { background: #07d; border-radius: 10px; }
+.channel-container { overflow-y: auto; flex-grow: 1; padding-right: 5px; }
+.channel-container::-webkit-scrollbar { width: 4px; }
+.channel-container::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); }
+.channel-container::-webkit-scrollbar-thumb { background: #ff0000; border-radius: 10px; }
 
 .channel-item { 
     display: flex; 
     align-items: center; 
-    padding: 10px; 
-    margin-bottom: 10px;
+    padding: 10px 12px; 
+    margin-bottom: 8px;
     background: rgba(255, 255, 255, 0.03);
-    border: 1.5px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px; 
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px; 
     cursor: pointer; 
-    position: relative;
-    overflow: hidden;
-    height: 65px; 
-    width: 100%;
-    transition: all 0.2s ease;
+    transition: all 0.25s ease;
 }
 .channel-item:hover { 
-    background: rgba(0, 153, 255, 0.08); 
-    border-color: rgba(0, 153, 255, 0.4);
+    background: rgba(255, 255, 255, 0.08); 
+    border-color: rgba(255, 255, 255, 0.25);
 }
 .channel-item.active { 
-    background: rgba(0, 153, 255, 0.12); 
-    border-color: #09f; 
-    box-shadow: 0 0 15px rgba(0, 153, 255, 0.3); 
+    background: rgba(255, 0, 0, 0.15); 
+    border-color: #ff0000; 
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.4); 
+}
+.channel-item img { width: 42px; height: 28px; object-fit: contain; margin-right: 12px; border-radius: 3px; background: rgba(255,255,255,0.05); }
+.channel-item span { font-size: 15px; font-weight: 600; color: #fff; }
+
+.bottom-right-controls {
+    position: absolute; bottom: 30px; right: 30px;
+    display: flex; align-items: center; gap: 15px; z-index: 10;
+    background: rgba(0,0,0,0.8); padding: 12px 22px; border-radius: 30px;
+    backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);
+    transition: opacity 0.4s, visibility 0.4s;
 }
 
-.channel-item img { 
-    width: 55px; 
-    height: 38px; 
-    object-fit: contain; 
-    margin-right: 12px; 
-    border-radius: 6px; 
-    background: #ffffff; 
-    padding: 3px;
-    flex-shrink: 0;
-}
+.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+input[type=range] { accent-color: #ff0000; cursor: pointer; }
+.icon-btn { color: white; cursor: pointer; font-size: 22px; background: none; border: none; }
 
-.channel-item .channel-name {
-    font-size: 14px; 
-    font-weight: 600; 
-    color: #fff; 
-    flex-grow: 1;
-    display: -webkit-box;
-    -webkit-line-clamp: 2; 
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 1.2;
-    max-height: 2.4em;
-}
-
-/* লাইভ ইন্ডিকেটর */
-.live-indicator {
-    display: flex !important;
-    align-items: center;
-    width: auto !important;
-    background: #0099ff;
-    color: #fff;
-    font-size: 8px !important;
-    font-weight: 800;
-    letter-spacing: 0.4px;
-    padding: 2px 6px !important;
-    border-radius: 4px;
-    position: absolute !important;
-    right: 6px;
-    top: 6px;
-    left: auto !important;
-    box-shadow: 0 2px 6px rgba(0, 153, 255, 0.5);
-    z-index: 6;
-    pointer-events: none;
-    line-height: 1.2;
-    max-width: 40px;
-    overflow: hidden;
-    white-space: nowrap;
-}
-
-/* =======================================================
-   ৪. লাইভ লোডার এবং অ্যানিমেশন
-   ======================================================= */
+/* লোডারটি শুধুমাত্র ভিডিও কন্টেইনারের ওপরে সঠিকভাবে অ্যালাইন হবে */
 .loader-overlay {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(2, 11, 20, 0.7); display: none; align-items: center;
-    justify-content: center; z-index: 5;
+    background: rgba(0, 0, 0, 0.6); display: none; align-items: center;
+    justify-content: center; z-index: 5; pointer-events: none;
 }
+.spinner {
+    width: 60px; height: 60px; border: 5px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%; border-top-color: #ff0000;
+    animation: spin 1s ease-in-out infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 
-.modern-loader {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.error-overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.9); display: none; align-items: center;
+    justify-content: center; z-index: 15; text-align: center; padding: 20px;
 }
+.error-card {
+    position: relative;
+    background: #111; border: 2px solid #ff0000; border-radius: 20px;
+    padding: 40px 30px 30px 30px; max-width: 450px; box-shadow: 0 0 30px rgba(255, 0, 0, 0.3);
+}
+.error-card i { font-size: 50px; color: #ff0000; margin-bottom: 15px; }
+.error-card h3 { font-size: 22px; margin-bottom: 10px; }
+.error-card p { font-size: 15px; color: #ccc; margin-bottom: 20px; line-height: 1.5; }
 
-.love-loader-hearts {
-    display: flex;
-    align-items: flex-end;
-    gap: 10px;
-    flex-shrink: 0;
+.close-error-btn {
+    position: absolute; top: 10px; right: 15px; background: none;
+    border: none; color: #ff0000; font-size: 32px; font-weight: bold;
+    cursor: pointer; transition: color 0.2s ease, transform 0.2s ease;
 }
-.love-loader-hearts i {
-    font-size: 28px;
-    color: #ffffff;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
-    animation: loveHeartBounce 1.2s ease-in-out infinite;
-}
-.love-loader-hearts i:nth-child(1) { animation-delay: 0s; }
-.love-loader-hearts i:nth-child(2) { animation-delay: 0.15s; }
-.love-loader-hearts i:nth-child(3) { animation-delay: 0.3s; }
+.close-error-btn:hover { color: #fff; transform: scale(1.1); }
 
-@keyframes loveHeartBounce {
-    0%, 60%, 100% { transform: translateY(0); opacity: 0.45; }
-    30% { transform: translateY(-10px); opacity: 1; }
+.wa-btn {
+    display: inline-flex; align-items: center; gap: 10px; background: #25d366;
+    color: white; text-decoration: none; padding: 12px 25px; font-weight: bold;
+    border-radius: 30px; transition: transform 0.2s;
+}
+.wa-btn:hover { transform: scale(1.05); }
+
+@media (min-width: 992px) {
+    .sidebar { width: 310px; left: 40px; }
+    .channel-item img { width: 50px; height: 32px; }
+    .channel-item span { font-size: 16px; }
 }
 
 /* =======================================================
-   ৫. মোবাইল পোর্ট্রেট (লম্বালম্বি স্ক্রিন)
+   মোবাইল পোর্ট্রেট (লম্বালম্বি) মোডের জন্য সংশোধিত সিএসএস
    ======================================================= */
 @media (max-width: 768px) and (orientation: portrait) {
     html, body {
@@ -453,48 +173,22 @@ input[type=range] {
     .mobile-top-header {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        background: #04121f;
+        background: #000;
         color: #fff;
-        padding: 10px 15px;
-        border-bottom: 2px solid rgba(0, 153, 255, 0.2); 
-        height: 52px;
-        flex-shrink: 0;
-    }
-
-    .header-logo-text {
         font-family: 'Segoe UI', sans-serif;
-        font-weight: 800;
-        font-size: 18px;
-        color: #ffffff;
-        letter-spacing: 0.5px;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
-    
-    .header-logo-text span {
-        color: #09f;
-    }
-
-    .exit-btn {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        padding: 5px 12px;
-        border-radius: 6px;
-        color: #fff;
-        text-decoration: none;
-        font-size: 12px;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 5px;
+        font-weight: 700;
+        font-size: 20px;
+        padding: 10px 15px;
+        border-bottom: 3.5px solid #ff0000; 
+        gap: 10px;
+        height: 50px;
+        flex-shrink: 0;
     }
 
     .player-wrapper {
         display: flex;
         flex-direction: column;
-        height: calc(100vh - 52px); 
+        height: calc(100vh - 50px); 
         overflow: hidden;
     }
 
@@ -503,46 +197,85 @@ input[type=range] {
         height: auto;
         aspect-ratio: 16 / 9;
         flex-shrink: 0;
+        border-bottom: 3px solid #ff0000;
         position: relative;
     }
 
-    video { width: 100%; height: 100%; object-fit: contain; }
+    video {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
 
+    .mobile-fs-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        bottom: 12px;
+        right: 12px;
+        width: 38px;
+        height: 38px;
+        background: rgba(0, 0, 0, 0.65);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-radius: 50%;
+        color: #fff;
+        font-size: 14px;
+        cursor: pointer;
+        z-index: 10;
+    }
+    .mobile-fs-btn:active {
+        background: rgba(255, 0, 0, 0.8);
+    }
+
+    /* পোর্ট্রেট মোডে সাইডবার স্টাইল */
     .sidebar {
         position: relative;
         left: 0;
         top: 0;
-        transform: none !important;
-        width: 100% !important;
-        height: auto !important;
+        transform: none;
+        width: 100%;
+        height: auto;
         flex-grow: 1;
-        background: #020b14 !important;
-        border: none !important;
-        border-radius: 0 !important;
-        padding: 15px 12px !important;
+        background: #000;
+        border: none;
+        border-radius: 0;
+        padding: 0;
         display: flex;
         flex-direction: column;
         overflow: hidden;
-        box-shadow: none !important;
         opacity: 1 !important;
         visibility: visible !important;
         pointer-events: auto !important;
     }
 
-    .sidebar-title { display: none; }
-    .search-box-container { margin-bottom: 15px; }
+    .sidebar-title {
+        background: #000;
+        border-top: 2px solid #ff0000;
+        border-bottom: 2px solid #ff0000;
+        font-size: 18px;
+        padding: 8px 15px;
+        margin-bottom: 0;
+        text-transform: none;
+        font-weight: bold;
+        color: #fff;
+    }
+    .sidebar-title i {
+        display: none;
+    }
 
-    /* ৩ কলামের গ্রিড লেআউট */
+    /* কলাম সংখ্যা ৪ থেকে পরিবর্তন করে ৩ করা হয়েছে এবং সাইজিং ঠিক করা হয়েছে */
     .channel-container {
         display: grid;
         grid-template-columns: repeat(3, 1fr); 
-        grid-auto-rows: 95px; 
+        grid-auto-rows: max-content; 
+        align-content: start; 
         gap: 12px;
-        padding: 4px 2px;
+        padding: 12px;
         overflow-y: auto;
         overflow-x: hidden;
         flex-grow: 1;
-        align-content: start;
+        box-sizing: border-box;
     }
 
     .channel-item {
@@ -550,233 +283,87 @@ input[type=range] {
         flex-direction: column;
         align-items: center;
         justify-content: flex-start;
-        background: rgba(255, 255, 255, 0.02) !important;
-        border: 1.5px solid rgba(255, 255, 255, 0.08) !important;
-        border-radius: 12px !important;
-        padding: 8px 6px !important;
-        margin-bottom: 0 !important;
-        height: 95px; 
+        background: none !important;
+        border: none !important;
+        padding: 0;
+        margin-bottom: 10px;
+        text-align: center;
+        box-shadow: none !important;
         width: 100%;
-        position: relative;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.15) !important;
-    }
-
-    .channel-item.active {
-        border-color: #09f !important;
-        box-shadow: 0 0 12px rgba(0, 153, 255, 0.4) !important;
-        background: rgba(0, 153, 255, 0.05) !important;
+        box-sizing: border-box;
     }
 
     .channel-item img {
         width: 100%;
-        height: 48px;
+        max-width: 80px; 
+        aspect-ratio: 16 / 9; /* লোগো সুন্দর দেখানোর জন্য ১৬:৯ করা হয়েছে */
+        height: auto;
         object-fit: contain;
-        background: #ffffff; 
-        border-radius: 8px;
-        padding: 4px;
-        margin-right: 0 !important;
+        background: #fff;
+        border: 2px solid #ff0000;
+        border-radius: 12px;
+        padding: 6px;
+        margin-right: 0;
         margin-bottom: 6px;
-        border: none;
-        box-shadow: none;
+        box-shadow: 0 0 8px rgba(255, 0, 0, 0.4);
+        transition: transform 0.2s ease-in-out;
+        box-sizing: border-box;
     }
 
-    .channel-item .live-indicator {
-        top: 4px !important;
-        right: 4px !important;
-        left: auto !important;
-        padding: 2px 5px !important;
-        font-size: 7px !important;
-        border-radius: 4px;
-        max-width: 34px !important;
+    .channel-item.active img {
+        border-color: #ff0000;
+        box-shadow: 0 0 15px rgba(255, 0, 0, 0.8);
+        transform: scale(1.05);
     }
 
-    .channel-item .channel-name {
-        font-size: 11px;
-        color: #e2e8f0;
-        font-weight: 600;
-        text-align: center;
+    .channel-item span {
+        font-size: 12px;
+        color: #fff;
+        font-weight: 500;
+        display: block;
         width: 100%;
-        display: -webkit-box;
-        -webkit-line-clamp: 2; 
-        -webkit-box-orient: vertical;
+        white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        line-height: 1.1;
     }
 
-    .bottom-right-controls { display: none !important; }
-
-    .mobile-mode-toggle-btn {
-        display: flex;
-        top: 10px;
-        right: 10px;
-        width: 36px;
-        height: 36px;
-        font-size: 14px;
+    .bottom-right-controls {
+        display: none !important;
     }
-
-    .error-card {
-        max-width: 200px;
-        padding: 14px 12px 12px;
-    }
-    .error-card i.fa-triangle-exclamation { font-size: 22px; }
-    .error-card h3 { font-size: 11px; }
-    .error-card p { font-size: 10px; }
-    .wa-btn { font-size: 10px; padding: 7px 11px; }
 }
 
-/* =======================================================
-   ৬. মোবাইল ল্যান্ডস্কেপ (স্ক্রিন ঘোরানো) মোড
-   ======================================================= */
-@media (max-width: 1024px) and (orientation: landscape) {
-    html, body {
-        height: 100%;
-        overflow: hidden;
-        position: fixed;
-        width: 100%;
-    }
-
-    .mobile-top-header { 
-        display: none !important; 
-    }
-
-    .player-wrapper {
-        position: relative;
-        width: 100vw;
-        height: 100vh;
-        overflow: hidden;
-        background: #000;
-    }
-
-    .video-container {
-        width: 100%;
-        height: 100%;
-        position: relative;
-    }
-
-    video { 
-        width: 100%; 
-        height: 100%; 
-        object-fit: contain; 
-    }
-
-    /* সাইডবার প্যানেল - ওভারলে হিসেবে বামপাশে ভাসমান থাকবে */
+/* মোবাইল ল্যান্ডস্কেপ (স্ক্রিন ঘোরানো) মোড */
+@media (max-height: 500px) and (orientation: landscape) {
     .sidebar {
-        position: absolute !important;
-        left: 20px !important;
-        top: 20px !important;
-        bottom: 20px !important;
-        transform: none !important;
-        width: 340px !important;
-        height: calc(100% - 40px) !important;
-        border-radius: 12px !important;
-        border: 1.5px solid rgba(0, 153, 255, 0.4) !important;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8) !important;
-        padding: 12px !important;
-        display: flex !important;
-        flex-direction: column !important;
-        background: rgba(4, 18, 31, 0.92) !important;
-        backdrop-filter: blur(20px) !important;
-        z-index: 10 !important;
-        transition: opacity 0.4s ease, visibility 0.4s ease, transform 0.4s ease !important;
+        height: 85vh;
+        width: 220px;
+        left: 15px;
+        padding: 10px;
     }
-
-    /* অটো হাইডের সময় মসৃণ স্লাইড আউট */
-    .sidebar.hidden {
-        opacity: 0 !important;
-        visibility: hidden !important;
-        transform: translateX(-30px) !important;
-        pointer-events: none !important;
-    }
-
     .sidebar-title {
-        display: flex;
-        font-size: 15px;
-        margin-bottom: 8px;
-        padding-bottom: 6px;
+        font-size: 14px;
+        margin-bottom: 10px;
+        padding-bottom: 5px;
     }
-
-    .search-box-container { 
-        margin-bottom: 10px; 
-    }
-    
-    .search-box-container input { 
-        font-size: 12px; 
-        padding: 8px 8px 8px 30px; 
-    }
-    
-    .search-box-container .search-icon { 
-        font-size: 12px; 
-        left: 10px; 
-    }
-
-    /* ল্যান্ডস্কেপ মোডে চ্যানেল লিস্ট */
-    .channel-container {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        overflow-y: auto;
-    }
-
     .channel-item {
-        display: flex !important;
-        flex-direction: row !important;
-        align-items: center !important;
-        height: 68px !important;
-        padding: 8px 12px !important;
-        margin-bottom: 0 !important;
-        width: 100% !important;
-        border-radius: 10px !important;
-        box-sizing: border-box !important;
+        padding: 6px 10px;
+        margin-bottom: 5px;
     }
-    
-    /* ল্যান্ডস্কেপ মোডে লোগোর আকার পরিবর্তন প্রতিরোধী মানসমূহ */
-    .channel-item img { 
-        width: 64px !important;
-        height: 46px !important;
-        object-fit: contain !important; /* লোগোর অরজিনাল রেশিও বজায় রাখবে */
-        background: #ffffff !important;
-        padding: 3px !important;
-        border-radius: 6px !important;
-        margin-right: 12px !important;
-        margin-bottom: 0 !important;
-        flex-shrink: 0 !important;
+    .channel-item img {
+        width: 35px;
+        height: 22px;
+        margin-right: 8px;
     }
-    
-    .channel-item .channel-name { 
-        font-size: 15px !important;
-        text-align: left !important;
-        padding-right: 40px !important; /* লাইভ ব্যাজের ওভারল্যাপিং এড়ানোর জন্য */
+    .channel-item span {
+        font-size: 13px;
     }
-
-    /* লাইভ ব্যাজ ল্যান্ডস্কেপ পজিশনিং */
-    .channel-item .live-indicator {
-        position: absolute !important;
-        right: 8px !important;
-        top: 50% !important;
-        transform: translateY(-50%) !important;
-        margin: 0 !important;
-    }
-    
-    /* ল্যান্ডস্কেপ মোডে ভাসমান কন্ট্রোলবার */
-    .bottom-right-controls { 
-        display: flex !important; 
-        bottom: 20px;
-        right: 20px;
+    .bottom-right-controls {
+        bottom: 15px;
+        right: 15px;
         padding: 8px 16px;
-        z-index: 10;
-        background: rgba(3, 14, 24, 0.85); 
-        border-radius: 30px;
-        border: 1px solid rgba(0, 153, 255, 0.2);
+        gap: 10px;
     }
-
-    .bottom-right-controls.hidden {
-        opacity: 0 !important;
-        visibility: hidden !important;
-        pointer-events: none !important;
-    }
-    
-    .mobile-mode-toggle-btn { 
-        display: none !important; 
+    .bottom-right-controls input[type=range] {
+        width: 60px;
     }
 }

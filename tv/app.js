@@ -4,21 +4,17 @@ const sidebar = document.getElementById('sidebar');
 const controls = document.getElementById('controls');
 const loader = document.getElementById('loaderOverlay');
 const errorOverlay = document.getElementById('errorOverlay');
-const modeToggleBtn = document.getElementById('modeToggleBtn');
-const modeToggleIcon = document.getElementById('modeToggleIcon');
-const modeToggleLabel = document.getElementById('modeToggleLabel');
-const mobileModeToggleBtn = document.getElementById('mobileModeToggleBtn');
-const mobileModeToggleIcon = document.getElementById('mobileModeToggleIcon');
+const fullscreenBtn = document.getElementById('fullscreen');
+const mobileFsBtn = document.getElementById('mobileFsBtn');
 const closeErrorBtn = document.getElementById('closeErrorBtn');
 const list = document.getElementById('channelList') || document.getElementById('channelsContainer');
-const searchInput = document.getElementById('channelSearch'); // সার্চ বার ইনপুট
 
 let timeout;
 let hlsInstance = null;
 let serverTimeOffset = 0;
 let currentSelectedIndex = 0;
 let channels = [];
-let currentMode = 'normal'; // 'normal' | 'full' | 'fit'
+let fullscreenState = 0; // ০: নরমাল, ১: ফুলস্ক্রিন (ফিট ছাড়া), ২: ফুলস্ক্রিন (সম্পূর্ণ ফিট)
 
 // চ্যানেল লিস্ট
 const CHANNELS = [
@@ -87,17 +83,17 @@ const CHANNELS = [
   { "id": "somoytv", "name": "Somoy TV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/somoytv.png" },
   { "id": "star-news", "name": "STAR NEWS", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/STAR-NEWS.png" },
   { "id": "srk-tv", "name": "SRK TV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/SRK-TV.png" },
-  { "id": "tsports", "name": "T Sports", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/tsports.png" },
-  { "id": "A-Sports", "name": "A Sports", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/asports.png" },
-  { "id": "STAR-SPORTS-1", "name": "Star Sports 1", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/starsports1.png" },
-  { "id": "Star-Sports-2", "name": "Star Sports 2", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/starsports2.png" },
-  { "id": "ten1", "name": "Sony Sports Ten 1", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/sonysportsten1.png" },
-  { "id": "ten2", "name": "Sony Sports Ten 2", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/sonysportsten2.png" },
-  { "id": "ten5", "name": "Sony Sports Ten 5", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/sonysportsten5.png" },
+  { "id": "T_Sports", "name": "T Sports", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/tsports.png" },
+  { "id": "a-sports", "name": "A Sports", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/asports.png" },
+  { "id": "Star_Spts_1", "name": "Star Sports 1", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/starsports1.png" },
+  { "id": "Star_Sports_2", "name": "Star Sports 2", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/starsports2.png" },
+  { "id": "Sony_Sports_Ten_1", "name": "Sony Sports Ten 1", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/sonysportsten1.png" },
+  { "id": "Sony_Sports_Ten_2", "name": "Sony Sports Ten 2", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/sonysportsten2.png" },
+  { "id": "Sony_Sports_Ten_5", "name": "Sony Sports Ten 5", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/sonysportsten5.png" },
   { "id": "Star-Sports-Select-1", "name": "Star Sports Select", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/Star-Sports-Select-1.png" },
   { "id": "star-Sports-Select-2", "name": "Star Sports Select 2", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/star-Sports-Select-2.png" },
   { "id": "Ten_Cricket_HD", "name": "Ten Cricket HD", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/tencrickethd.png" },
-  { "id": "ptv", "name": "Ptv Sports", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/ptvsports.png" },
+  { "id": "Ptv_sports", "name": "Ptv Sports", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/ptvsports.png" },
   { "id": "Fox_Sports_2", "name": "Fox Sports", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/foxsports.png" },
   { "id": "WILLOW_LIVE", "name": "WILLOW LIVE", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/willowlive.png" },
   { "id": "Bein_Sports_2", "name": "Bein Sports", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/beinsports.png" }
@@ -109,26 +105,31 @@ const IPTV_SERVER_URL = "https://aboxbdix-main-server.mdabdullahsheikh017-924.wo
 const SECRET_KEY = "my_super_secret_tv_key_2026"; 
 
 // প্রিমিয়াম চ্যানেলসমূহ
-const premiumChannelIds = [ '1', '2'];
+const premiumChannelIds = [ 'A-Sports', 'Star-Sports-Select-1', 'star-Sports-Select-2', 'Sony-Ten-1', 'Sony-Ten-2', 'Sony-Ten-5', 'STAR-SPORTS-1', 'Star-Sports-2', 'colors-bangla', 'jalsha-movies-hd', 'star-jalsa-hd', 'zee-bangla', 'BTV'];
 
 // উন্নত মোবাইল ও স্মার্ট টিভি ডিভাইস সনাক্তকরণ
 function isMobileDevice() {
     const ua = navigator.userAgent.toLowerCase();
-    const isTV = /tv|smarttv|googletv|appletv|tizen|webos|hbbtv|netcast|viera|firetv|boxee|rokutv|mediaroom|slcomm|digian|xtreamer/i.test(ua);
-    if (isTV) return false;
     
+    // অ্যান্ড্রয়েড টিভি, ফায়ার টিভি, বা যেকোনো স্মার্ট টিভি ডিটেক্ট করা
+    const isTV = /tv|smarttv|googletv|appletv|tizen|webos|hbbtv|netcast|viera|firetv|boxee|rokutv|mediaroom|slcomm|digian|xtreamer/i.test(ua);
+    if (isTV) return false; // টিভি হলে মোবাইল লেআউট ব্যবহার করবে না
+    
+    // শুধুমাত্র মোবাইল ফোন এবং ট্যাবলেট
     const isMobileUA = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(ua);
     const hasTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
     
-    const minDimension = Math.min(window.innerWidth, window.innerHeight);
-    return isMobileUA && hasTouch && (minDimension <= 768);
+    return isMobileUA && hasTouch && (window.innerWidth <= 768);
 }
 
 // নির্দিষ্ট পাথ ম্যাপিং
 function getChannelPath(id) {
-    const pathMap = {        
-        '1zee-bangla': '/ZEE-BANGLA/index.fmp4.m3u8',
-        '2BTV': '/BTV/index.fmp4.m3u8'
+    const pathMap = {
+        'colors-bangla': '/COLORS-BANGLA/index.fmp4.m3u8',
+        'jalsha-movies-hd': '/JALSHA-MOVIES/index.fmp4.m3u8',
+        'star-jalsa-hd': '/STAR-JALSHA/index.fmp4.m3u8',
+        'zee-bangla': '/ZEE-BANGLA/index.fmp4.m3u8',
+        'BTV': '/BTV/index.fmp4.m3u8'
     };
     return pathMap[id] || `/${id.toUpperCase()}/index.fmp4.m3u8`;
 }
@@ -171,32 +172,16 @@ function generateIPTVUrl(channelId) {
 }
 
 // চ্যানেল লিস্ট রেন্ডারিং
-function buildChannelList(filterText = "") {
+function buildChannelList() {
     if (!list) return;
     list.innerHTML = "";
-    
-    const lowerFilter = filterText.toLowerCase().trim();
-
     channels.forEach((ch, index) => {
-        if (lowerFilter && !ch.name.toLowerCase().includes(lowerFilter)) {
-            return;
-        }
-
         const div = document.createElement('div');
         div.className = 'channel-item';
-        if (index === currentSelectedIndex) {
-            div.classList.add('active');
-        }
         div.setAttribute('data-index', index);
         
         const logoUrl = ch.logo || 'https://via.placeholder.com/50?text=TV';
-        const liveBadge = (index === currentSelectedIndex) ? `<span class="live-indicator">LIVE</span>` : '';
-
-        div.innerHTML = `
-            <img src="${logoUrl}" alt="${ch.name}" onerror="this.src='https://via.placeholder.com/50?text=TV'"> 
-            <span class="channel-name">${ch.name}</span>
-            ${liveBadge}
-        `;
+        div.innerHTML = `<img src="${logoUrl}" alt="${ch.name}" onerror="this.src='https://via.placeholder.com/50?text=TV'"> <span>${ch.name}</span>`;
         
         div.onclick = () => {
             selectAndPlay(index);
@@ -210,17 +195,10 @@ async function selectAndPlay(index) {
     if (channels.length === 0) return;
     currentSelectedIndex = index;
     
-    document.querySelectorAll('.channel-item').forEach((el) => {
+    document.querySelectorAll('.channel-item').forEach((el, idx) => {
         el.classList.remove('active');
-        const existingBadge = el.querySelector('.live-indicator');
-        if (existingBadge) existingBadge.remove();
-
-        if (parseInt(el.getAttribute('data-index')) === index) {
+        if (idx === index) {
             el.classList.add('active');
-            const badge = document.createElement('span');
-            badge.className = 'live-indicator';
-            badge.textContent = 'LIVE';
-            el.appendChild(badge);
             el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
     });
@@ -251,7 +229,7 @@ async function selectAndPlay(index) {
     }
 }
 
-// HLS ভিডিও প্লেব্যাক সিস্টেম
+// HLS ভিডিও প্লেব্যাক সিস্টেম (অটোপ্লে ব্লকিং প্রতিরোধের জন্য মডিফাইড)
 function playHLS(url) {
     if (hlsInstance) {
         hlsInstance.destroy();
@@ -272,8 +250,11 @@ function playHLS(url) {
             }
         });
         
+        // প্রথমে স্বাভাবিকভাবে প্লে করার চেষ্টা করবে, ব্রাউজার ব্লক করলে মিউটেড অবস্থায় প্লে করবে
         video.play()
-            .then(() => { video.muted = false; })
+            .then(() => {
+                video.muted = false;
+            })
             .catch(() => {
                 video.muted = true;
                 video.play().catch(() => {});
@@ -281,7 +262,9 @@ function playHLS(url) {
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
         video.src = url;
         video.play()
-            .then(() => { video.muted = false; })
+            .then(() => {
+                video.muted = false;
+            })
             .catch(() => {
                 video.muted = true;
                 video.play().catch(() => {});
@@ -289,7 +272,7 @@ function playHLS(url) {
     }
 }
 
-// ব্রাউজারে স্বয়ংক্রিয়ভাবে সাউন্ড চালু করার পলিসি বাইপাস ট্র্রিগার
+// ব্রাউজারে ব্যবহারকারীর প্রথম স্পর্শ/ক্লিকেই অডিও স্বয়ংক্রিয়ভাবে চালু করার ট্রিগার
 function enableAutoplaySound() {
     const handleFirstInteraction = () => {
         if (video && video.muted) {
@@ -310,13 +293,6 @@ if (video) {
     video.addEventListener('waiting', () => showLoader(true));
     video.addEventListener('playing', () => { showLoader(false); hideError(); });
     video.addEventListener('error', () => showError());
-}
-
-// সার্চ ইনপুট লিসেনার যুক্ত করা
-if (searchInput) {
-    searchInput.addEventListener('input', (e) => {
-        buildChannelList(e.target.value);
-    });
 }
 
 function showLoader(status) {
@@ -341,7 +317,7 @@ async function autoStartApp() {
     const volInput = document.getElementById('volume');
     if (volInput) volInput.value = 1.0;
 
-    enableAutoplaySound();
+    enableAutoplaySound(); // সাউন্ড পলিসি বাইপাস ফাংশন অ্যাক্টিভেট করা হলো
     await syncServerTime();
     await fetchChannels(); 
     buildChannelList();    
@@ -355,21 +331,19 @@ window.addEventListener('DOMContentLoaded', () => {
     autoStartApp();
 });
 
-// কন্ট্রোলবার এবং সাইডবার অটো-হাইড লজিক
+// রিমোট কন্ট্রোল, মোবাইল বাটন এবং সাইডবার অটো-হাইড লজিক
 function resetTimer() {
     const isPortrait = isMobileDevice() && window.innerHeight > window.innerWidth && !document.fullscreenElement;
-
-    if (sidebar) sidebar.classList.remove('hidden');
+    
+    if (sidebar && !isPortrait) sidebar.classList.remove('hidden');
     if (controls) controls.classList.remove('hidden');
-    if (mobileModeToggleBtn) mobileModeToggleBtn.classList.remove('hidden');
+    if (mobileFsBtn) mobileFsBtn.classList.remove('hidden');
 
     clearTimeout(timeout);
     timeout = setTimeout(() => {
-        if (!isPortrait) {
-            if (sidebar) sidebar.classList.add('hidden');
-            if (controls) controls.classList.add('hidden');
-            if (mobileModeToggleBtn) mobileModeToggleBtn.classList.add('hidden');
-        }
+        if (sidebar && !isPortrait) sidebar.classList.add('hidden');
+        if (controls) controls.classList.add('hidden');
+        if (mobileFsBtn) mobileFsBtn.classList.add('hidden');
     }, 4000);
 }
 
@@ -377,13 +351,8 @@ if (video) video.addEventListener('click', resetTimer);
 document.addEventListener('mousemove', resetTimer);
 document.addEventListener('touchstart', resetTimer);
 
-window.addEventListener('orientationchange', () => setTimeout(resetTimer, 200));
-window.addEventListener('resize', resetTimer);
-
 // কীবোর্ড এবং টিভির রিমোট কন্ট্রোল বাইন্ডিংস
 document.addEventListener('keydown', (e) => {
-    if (document.activeElement === searchInput) return;
-
     if (errorOverlay && errorOverlay.style.display === 'flex') {
         if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'Escape') {
             hideError();
@@ -428,129 +397,59 @@ document.addEventListener('keydown', (e) => {
     }
     else if (e.key === 'Enter') {
         e.preventDefault();
-        cyclePlayerMode();
+        handleFullscreenCycle();
     }
 });
 
-// Normal / Full / Fit - তিনটি ভিউ মোড সেট করার মূল ফাংশন
-async function setPlayerMode(mode) {
+// ডাবল স্টেজ ফুলস্ক্রিন ও অটো-রোটেশন মেকানিজম (Contain -> Stretch -> Normal)
+async function handleFullscreenCycle() {
     const wrapper = document.getElementById('playerWrapper');
     if (!wrapper || !video) return;
 
-    const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
-
-    if (mode === 'normal') {
-        if (isFs) {
-            if (document.exitFullscreen) await document.exitFullscreen().catch(() => {});
-            else if (document.webkitExitFullscreen) await document.webkitExitFullscreen().catch(() => {});
-        }
-        video.style.setProperty('object-fit', 'contain', 'important');
-        
-        if (screen.orientation && typeof screen.orientation.unlock === 'function') {
-            try {
-                screen.orientation.unlock();
-            } catch (err) {
-                console.warn("Orientation unlock failed:", err);
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        try {
+            if (wrapper.requestFullscreen) {
+                await wrapper.requestFullscreen();
+            } else if (wrapper.webkitRequestFullscreen) {
+                await wrapper.webkitRequestFullscreen();
             }
-        }
-    } else if (mode === 'full') {
-        if (!isFs) {
-            try {
-                if (wrapper.requestFullscreen) await wrapper.requestFullscreen();
-                else if (wrapper.webkitRequestFullscreen) await wrapper.webkitRequestFullscreen();
-            } catch (err) {
-                console.error("Fullscreen entry failed:", err);
+            
+            if (screen.orientation && screen.orientation.lock) {
+                await screen.orientation.lock('landscape').catch(() => {});
             }
+            video.style.setProperty('object-fit', 'contain', 'important');
+            fullscreenState = 1;
+        } catch (err) {
+            console.error("Fullscreen entry failed:", err);
         }
-        video.style.setProperty('object-fit', 'contain', 'important');
-        
-        if (screen.orientation && typeof screen.orientation.lock === 'function') {
-            try {
-                await screen.orientation.lock('landscape');
-            } catch (err) {
-                console.warn("Landscape orientation lock failed:", err);
-            }
-        }
-    } else if (mode === 'fit') {
-        if (!isFs) {
-            try {
-                if (wrapper.requestFullscreen) await wrapper.requestFullscreen();
-                else if (wrapper.webkitRequestFullscreen) await wrapper.webkitRequestFullscreen();
-            } catch (err) {
-                console.error("Fullscreen entry failed:", err);
-            }
-        }
+    } else if (fullscreenState === 1) {
         video.style.setProperty('object-fit', 'fill', 'important');
-        
-        if (screen.orientation && typeof screen.orientation.lock === 'function') {
-            try {
-                await screen.orientation.lock('landscape');
-            } catch (err) {
-                console.warn("Landscape orientation lock failed:", err);
-            }
+        fullscreenState = 2;
+    } else {
+        if (document.exitFullscreen) {
+            await document.exitFullscreen().catch(() => {});
+        } else if (document.webkitExitFullscreen) {
+            await document.webkitExitFullscreen().catch(() => {});
         }
+        video.style.setProperty('object-fit', 'contain', 'important');
+        fullscreenState = 0;
     }
-
-    currentMode = mode;
-    updateModeButtons();
-    resetTimer();
 }
 
-function cyclePlayerMode() {
-    const order = ['normal', 'full', 'fit'];
-    const next = order[(order.indexOf(currentMode) + 1) % order.length];
-    setPlayerMode(next);
-}
-
-const MODE_CONFIG = {
-    normal: { icon: 'fa-compress',                              label: 'Normal', title: 'Normal Mode' },
-    full:   { icon: 'fa-expand',                                 label: 'Full',   title: 'Full Mode (Fullscreen)' },
-    fit:    { icon: 'fa-up-right-and-down-left-from-center',     label: 'Fit',    title: 'Fit Mode (Stretch to Screen)' }
-};
-
-function updateModeButtons() {
-    const cfg = MODE_CONFIG[currentMode] || MODE_CONFIG.normal;
-
-    if (modeToggleIcon) modeToggleIcon.className = `fa-solid ${cfg.icon}`;
-    if (modeToggleLabel) modeToggleLabel.textContent = cfg.label;
-    if (modeToggleBtn) modeToggleBtn.title = cfg.title;
-
-    if (mobileModeToggleIcon) mobileModeToggleIcon.className = `fa-solid ${cfg.icon}`;
-    if (mobileModeToggleBtn) mobileModeToggleBtn.title = cfg.title;
-}
-
-if (modeToggleBtn) {
-    modeToggleBtn.onclick = () => {
-        cyclePlayerMode();
-        resetTimer();
-    };
-}
-if (mobileModeToggleBtn) {
-    mobileModeToggleBtn.onclick = () => {
-        cyclePlayerMode();
-        resetTimer();
-    };
-}
-
-const handleFullscreenExit = () => {
-    const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
-    if (!isFs) {
+// ওরিয়েন্টেশন ও ফুলস্ক্রিন স্টেজ রিলিজ লিসেনার
+const releaseOrientation = () => {
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        if (screen.orientation && screen.orientation.unlock) {
+            screen.orientation.unlock();
+        }
         if (video) video.style.setProperty('object-fit', 'contain', 'important');
-        currentMode = 'normal';
-        
-        if (screen.orientation && typeof screen.orientation.unlock === 'function') {
-            try {
-                screen.orientation.unlock();
-            } catch (err) {
-                console.warn("Orientation unlock failed:", err);
-            }
-        }
-        updateModeButtons();
+        fullscreenState = 0;
     }
 };
-document.addEventListener('fullscreenchange', handleFullscreenExit);
-document.addEventListener('webkitfullscreenchange', handleFullscreenExit);
+document.addEventListener('fullscreenchange', releaseOrientation);
+document.addEventListener('webkitfullscreenchange', releaseOrientation);
 
+// স্লাইডার ভলিউম ইভেন্ট
 const volumeSlider = document.getElementById('volume');
 if (volumeSlider) {
     volumeSlider.oninput = (e) => {
@@ -561,8 +460,8 @@ if (volumeSlider) {
     };
 }
 
-updateModeButtons();
-
+if (fullscreenBtn) fullscreenBtn.onclick = handleFullscreenCycle;
+if (mobileFsBtn) mobileFsBtn.onclick = handleFullscreenCycle;
 if (closeErrorBtn) closeErrorBtn.onclick = hideError;
 
 // সিকিউরিটি বাইন্ডিং

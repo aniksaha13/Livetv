@@ -1,32 +1,32 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-    <script>
-        (function() {    
-            const currentToken = sessionStorage.getItem('allowed_entry');
-            const expectedPrefix = btoa("RYUOX_SECURE_ENTRY_");
-            
-            let isValid = false;
-            if (currentToken) {
-                try {
-                    const decoded = atob(currentToken);
-                    if (decoded.startsWith("RYUOX_SECURE_ENTRY_")) {
-                        isValid = true;
-                    }
-                } catch(e) {
-                    isValid = false;
+<script>
+    (function() {    
+        const currentToken = sessionStorage.getItem('allowed_entry');
+        const expectedPrefix = btoa("RYUOX_SECURE_ENTRY_");
+        
+        let isValid = false;
+        if (currentToken) {
+            try {
+                const decoded = atob(currentToken);
+                if (decoded.startsWith("RYUOX_SECURE_ENTRY_")) {
+                    isValid = true;
                 }
+            } catch(e) {
+                isValid = false;
             }
+        }
 
-            if (!isValid) {           
-                window.location.href = '../index.html'; 
-            }
-        })();
-    </script>
+        if (!isValid) {           
+            window.location.href = '../index.html'; 
+        }
+    })();
+</script>
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ABOX BDIX - Professional IPTV Player</title>
+    <title>RYVOX TV - Professional</title>
     <link class="favicon" rel="icon" type="image/png" href="https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/icon/tv.png">
     <!-- CSS Link -->
     <link rel="stylesheet" href="style.css">
@@ -42,31 +42,20 @@
 <div class="player-wrapper" id="playerWrapper">
     <!-- মোবাইল টপ হেডার -->
     <div class="mobile-top-header" id="mobileTopHeader">
-        <div class="header-logo-text">
-            <i class="fa-solid fa-circle-play-badge animated-logo"></i> ABOX <span>BDIX</span>
-        </div>
-        <a href="../index.html" class="exit-btn">
-            <i class="fa-solid fa-right-from-bracket"></i> বাহির
-        </a>
+        <i class="fa-solid fa-tv"></i> RYVOX TV
     </div>
 
     <!-- ভিডিও এবং মোবাইল ফুলস্ক্রিন কন্টেইনার -->
     <div class="video-container">
         <video id="video" playsinline webkit-playsinline></video>
         
-        <!-- লোডার -->
+        <!-- লোডারটি এখানে রাখা হলো যাতে ভিডিওর মাঝখানে ঠিকঠাক বসে -->
         <div class="loader-overlay" id="loaderOverlay">
-            <div class="modern-loader">
-                <div class="love-loader-hearts">
-                    <i class="fa-solid fa-heart"></i>
-                    <i class="fa-solid fa-heart"></i>
-                    <i class="fa-solid fa-heart"></i>
-                </div>
-            </div>
+            <div class="spinner"></div>
         </div>
 
-        <button class="mobile-mode-toggle-btn" id="mobileModeToggleBtn" title="Player Mode">
-            <i class="fa-solid fa-compress" id="mobileModeToggleIcon"></i>
+        <button class="mobile-fs-btn" id="mobileFsBtn">
+            <i class="fa fa-expand"></i>
         </button>
     </div>
 
@@ -74,36 +63,24 @@
         <div class="error-card">
             <button class="close-error-btn" id="closeErrorBtn">&times;</button>
             <i class="fa-solid fa-triangle-exclamation"></i>
-            <div class="error-text">
-                <h3>চ্যানেল লোড হচ্ছে না</h3>
-                <p>সাময়িক সমস্যা, সাহায্যের জন্য যোগাযোগ করুন</p>
-            </div>
+            <h3>স্ট্রীম অফলাইন বা টেকনিক্যাল সমস্যা</h3>
+            <p>সাময়িক সমস্যার কারণে চ্যানেলটি লোড করা যাচ্ছে না। দয়া করে আমাদের কারিগরি টিমের সাথে এখনই হোয়াটসঅ্যাপে যোগাযোগ করুন।</p>
             <a href="https://wa.me/8801872173839" target="_blank" class="wa-btn" id="waBtn">
-                <i class="fab fa-whatsapp"></i> যোগাযোগ
+                <i class="fab fa-whatsapp"></i> হোয়াটসঅ্যাপে যোগাযোগ করুন (01872-173839)
             </a>
         </div>
     </div>
 
     <!-- সাইডবার / মোবাইল চ্যানেল গ্রিড -->
     <div class="sidebar" id="sidebar">
-        <div class="sidebar-title"><i class="fa-solid fa-tv"></i> ABOX BDIX</div>
-        
-        <!-- নতুন চ্যানেল সার্চ বার -->
-        <div class="search-box-container">
-            <i class="fa fa-search search-icon"></i>
-            <input type="text" id="channelSearch" placeholder="চ্যানেল খুঁজুন...">
-        </div>
-        
+        <div class="sidebar-title">TV List</div>
         <div class="channel-container" id="channelList"></div>
     </div>
     
     <div class="bottom-right-controls" id="controls">
         <i class="fa fa-volume-up"></i>
         <input type="range" id="volume" min="0" max="1" step="0.1" value="1">
-        <button class="mode-toggle-btn" id="modeToggleBtn" title="Player Mode">
-            <i class="fa-solid fa-compress" id="modeToggleIcon"></i>
-            <span id="modeToggleLabel">Normal</span>
-        </button>
+        <button class="icon-btn" id="fullscreen"><i class="fa fa-expand"></i></button>
     </div>
 </div>
 
