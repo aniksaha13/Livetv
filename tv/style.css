@@ -353,28 +353,15 @@ input[type=range] {
     box-shadow: 0 0 15px rgba(0, 153, 255, 0.3); 
 }
 
-/* ইমেজ র‍্যাপার কন্টেইনার */
-.channel-logo-wrapper {
-    width: 55px;
-    height: 38px;
-    background: #ffffff;
-    border-radius: 6px;
+.channel-item img { 
+    width: 55px; 
+    height: 38px; 
+    object-fit: contain; 
+    margin-right: 12px; 
+    border-radius: 6px; 
+    background: #ffffff; 
     padding: 3px;
-    margin-right: 12px;
     flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-}
-
-.channel-logo-wrapper img { 
-    max-width: 100%;
-    max-height: 100%;
-    width: auto;
-    height: auto;
-    object-fit: contain;
-    display: block;
 }
 
 .channel-item .channel-name {
@@ -580,28 +567,17 @@ input[type=range] {
         background: rgba(0, 153, 255, 0.05) !important;
     }
 
-    .channel-item .channel-logo-wrapper {
-        width: 100% !important;
-        height: 48px !important;
-        background: #ffffff !important; 
-        border-radius: 8px !important;
-        padding: 4px !important;
+    .channel-item img {
+        width: 100%;
+        height: 48px;
+        object-fit: contain;
+        background: #ffffff; 
+        border-radius: 8px;
+        padding: 4px;
         margin-right: 0 !important;
-        margin-bottom: 6px !important;
-        border: none !important;
-        box-shadow: none !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        overflow: hidden !important;
-    }
-
-    .channel-item .channel-logo-wrapper img {
-        max-width: 100% !important;
-        max-height: 100% !important;
-        width: auto !important;
-        height: auto !important;
-        object-fit: contain !important;
+        margin-bottom: 6px;
+        border: none;
+        box-shadow: none;
     }
 
     .channel-item .live-indicator {
@@ -652,7 +628,7 @@ input[type=range] {
 /* =======================================================
    ৬. মোবাইল ল্যান্ডস্কেপ (স্ক্রিন ঘোরানো) মোড
    ======================================================= */
-@media (max-height: 500px) and (orientation: landscape) {
+@media (max-width: 1024px) and (orientation: landscape) {
     html, body {
         height: 100%;
         overflow: hidden;
@@ -754,29 +730,17 @@ input[type=range] {
         box-sizing: border-box !important;
     }
     
-    /* ল্যান্ডস্কেপ মোডে লোগো র‍্যাপার */
-    .channel-item .channel-logo-wrapper { 
+    /* ল্যান্ডস্কেপ মোডে লোগোর আকার পরিবর্তন প্রতিরোধী মানসমূহ */
+    .channel-item img { 
         width: 64px !important;
         height: 46px !important;
+        object-fit: contain !important; /* লোগোর অরজিনাল রেশিও বজায় রাখবে */
         background: #ffffff !important;
         padding: 3px !important;
         border-radius: 6px !important;
         margin-right: 12px !important;
         margin-bottom: 0 !important;
         flex-shrink: 0 !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        overflow: hidden !important;
-    }
-
-    .channel-item .channel-logo-wrapper img {
-        max-width: 100% !important;
-        max-height: 100% !important;
-        width: auto !important;
-        height: auto !important;
-        object-fit: contain !important;
-        display: block !important;
     }
     
     .channel-item .channel-name { 
@@ -815,146 +779,4 @@ input[type=range] {
     .mobile-mode-toggle-btn { 
         display: none !important; 
     }
-}
-
-/* =======================================================
-   ৭. আসল ফুলস্ক্রিন মোড (Fullscreen API) - ডিভাইসের স্ক্রিন সাইজ যাই হোক,
-      ভিডিও সত্যিকারের ফুলস্ক্রিনে গেলে এই স্টাইল নিশ্চিতভাবে প্রয়োগ হবে
-   ======================================================= */
-#playerWrapper:fullscreen .mobile-top-header,
-#playerWrapper:-webkit-full-screen .mobile-top-header {
-    display: none !important;
-}
-
-#playerWrapper:fullscreen .sidebar,
-#playerWrapper:-webkit-full-screen .sidebar {
-    position: absolute !important;
-    left: 20px !important;
-    top: 20px !important;
-    bottom: 20px !important;
-    transform: none !important;
-    width: 340px !important;
-    height: calc(100% - 40px) !important;
-    border-radius: 12px !important;
-    border: 1.5px solid rgba(0, 153, 255, 0.4) !important;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8) !important;
-    padding: 12px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    background: rgba(4, 18, 31, 0.92) !important;
-    backdrop-filter: blur(20px) !important;
-    z-index: 10 !important;
-}
-
-#playerWrapper:fullscreen .sidebar.hidden,
-#playerWrapper:-webkit-full-screen .sidebar.hidden {
-    opacity: 0 !important;
-    visibility: hidden !important;
-    transform: translateX(-30px) !important;
-    pointer-events: none !important;
-}
-
-#playerWrapper:fullscreen .sidebar-title,
-#playerWrapper:-webkit-full-screen .sidebar-title {
-    display: flex !important;
-    font-size: 15px !important;
-    margin-bottom: 8px !important;
-    padding-bottom: 6px !important;
-}
-
-#playerWrapper:fullscreen .search-box-container,
-#playerWrapper:-webkit-full-screen .search-box-container {
-    margin-bottom: 10px !important;
-}
-
-#playerWrapper:fullscreen .search-box-container input,
-#playerWrapper:-webkit-full-screen .search-box-container input {
-    font-size: 13px !important;
-    padding: 8px 8px 8px 30px !important;
-}
-
-#playerWrapper:fullscreen .channel-container,
-#playerWrapper:-webkit-full-screen .channel-container {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 8px !important;
-    overflow-y: auto !important;
-}
-
-#playerWrapper:fullscreen .channel-item,
-#playerWrapper:-webkit-full-screen .channel-item {
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    height: 70px !important;
-    padding: 8px 12px !important;
-    margin-bottom: 0 !important;
-    width: 100% !important;
-    border-radius: 10px !important;
-    box-sizing: border-box !important;
-}
-
-#playerWrapper:fullscreen .channel-item .channel-logo-wrapper,
-#playerWrapper:-webkit-full-screen .channel-item .channel-logo-wrapper {
-    width: 66px !important;
-    height: 48px !important;
-    background: #ffffff !important;
-    padding: 3px !important;
-    border-radius: 6px !important;
-    margin-right: 12px !important;
-    margin-bottom: 0 !important;
-    flex-shrink: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    overflow: hidden !important;
-}
-
-#playerWrapper:fullscreen .channel-item .channel-logo-wrapper img,
-#playerWrapper:-webkit-full-screen .channel-item .channel-logo-wrapper img {
-    max-width: 100% !important;
-    max-height: 100% !important;
-    width: auto !important;
-    height: auto !important;
-    object-fit: contain !important;
-}
-
-#playerWrapper:fullscreen .channel-item .channel-name,
-#playerWrapper:-webkit-full-screen .channel-item .channel-name {
-    font-size: 16px !important;
-    text-align: left !important;
-    padding-right: 40px !important;
-}
-
-#playerWrapper:fullscreen .channel-item .live-indicator,
-#playerWrapper:-webkit-full-screen .channel-item .live-indicator {
-    position: absolute !important;
-    right: 8px !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-    margin: 0 !important;
-}
-
-#playerWrapper:fullscreen .bottom-right-controls,
-#playerWrapper:-webkit-full-screen .bottom-right-controls {
-    display: flex !important;
-    bottom: 20px !important;
-    right: 20px !important;
-    padding: 8px 16px !important;
-    z-index: 10 !important;
-    background: rgba(3, 14, 24, 0.85) !important;
-    border-radius: 30px !important;
-    border: 1px solid rgba(0, 153, 255, 0.2) !important;
-}
-
-#playerWrapper:fullscreen .bottom-right-controls.hidden,
-#playerWrapper:-webkit-full-screen .bottom-right-controls.hidden {
-    opacity: 0 !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
-}
-
-#playerWrapper:fullscreen .mobile-mode-toggle-btn,
-#playerWrapper:-webkit-full-screen .mobile-mode-toggle-btn {
-    display: none !important;
 }
