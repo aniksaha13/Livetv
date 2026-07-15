@@ -181,7 +181,7 @@ function buildChannelList() {
         div.setAttribute('data-index', index);
         
         const logoUrl = ch.logo || 'https://via.placeholder.com/50?text=TV';
-        div.innerHTML = `<img src="${logoUrl}" alt="${ch.name}" onerror="this.src='https://via.placeholder.com/50?text=TV'"> <span>${ch.name}</span>`;
+        div.innerHTML = `<span class="live-badge">LIVE</span><img src="${logoUrl}" alt="${ch.name}" onerror="this.src='https://via.placeholder.com/50?text=TV'"> <span>${ch.name}</span>`;
         
         div.onclick = () => {
             selectAndPlay(index);

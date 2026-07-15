@@ -8,6 +8,9 @@ body { background: #000; color: #fff; font-family: 'Segoe UI', sans-serif; overf
     display: none;
 }
 
+.brand-white { color: #ffffff; }
+.brand-accent { color: #0099ff; }
+
 /* ভিডিও কন্টেইনার */
 .video-container {
     width: 100%;
@@ -78,6 +81,7 @@ video {
 .channel-container::-webkit-scrollbar-thumb { background: #0099ff; border-radius: 10px; }
 
 .channel-item { 
+    position: relative;
     display: flex; 
     align-items: center; 
     padding: 10px 12px; 
@@ -87,6 +91,27 @@ video {
     border-radius: 8px; 
     cursor: pointer; 
     transition: all 0.25s ease;
+}
+
+/* সিলেক্ট করা চ্যানেলের উপরে ছোট্ট LIVE ব্যাজ */
+.live-badge {
+    display: none;
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: #ff0033;
+    color: #fff;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    padding: 2px 6px;
+    border-radius: 6px;
+    box-shadow: 0 0 8px rgba(255, 0, 51, 0.8);
+    z-index: 2;
+    pointer-events: none;
+}
+.channel-item.active .live-badge {
+    display: inline-block;
 }
 .channel-item:hover { 
     background: rgba(255, 255, 255, 0.08); 
@@ -118,12 +143,27 @@ input[type=range] { accent-color: #0099ff; cursor: pointer; }
     background: rgba(0, 0, 0, 0.6); display: none; align-items: center;
     justify-content: center; z-index: 5; pointer-events: none;
 }
-.spinner {
-    width: 60px; height: 60px; border: 5px solid rgba(255, 255, 255, 0.1);
-    border-radius: 50%; border-top-color: #0099ff;
-    animation: spin 1s ease-in-out infinite;
+.heart-loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
+.heart-loader span {
+    font-size: 34px;
+    line-height: 1;
+    color: #ffffff;
+    display: inline-block;
+    animation: heartBounce 0.9s ease-in-out infinite;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+}
+.heart-loader span:nth-child(1) { animation-delay: 0s; }
+.heart-loader span:nth-child(2) { animation-delay: 0.15s; }
+.heart-loader span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes heartBounce {
+    0%, 60%, 100% { transform: translateY(0) scale(1); }
+    30% { transform: translateY(-18px) scale(1.1); }
+}
 
 .error-overlay {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -336,7 +376,7 @@ input[type=range] { accent-color: #0099ff; cursor: pointer; }
 @media (max-height: 500px) and (orientation: landscape) {
     .sidebar {
         height: 85vh;
-        width: 220px;
+        width: 240px;
         left: 15px;
         padding: 10px;
     }
@@ -346,16 +386,22 @@ input[type=range] { accent-color: #0099ff; cursor: pointer; }
         padding-bottom: 5px;
     }
     .channel-item {
-        padding: 6px 10px;
-        margin-bottom: 5px;
+        padding: 7px 10px;
+        margin-bottom: 6px;
     }
     .channel-item img {
-        width: 35px;
-        height: 22px;
+        width: 42px;
+        height: 27px;
         margin-right: 8px;
     }
     .channel-item span {
-        font-size: 13px;
+        font-size: 14px;
+    }
+    .live-badge {
+        font-size: 8px;
+        padding: 1px 5px;
+        top: -5px;
+        right: -5px;
     }
     .bottom-right-controls {
         bottom: 15px;
