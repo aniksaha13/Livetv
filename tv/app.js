@@ -357,17 +357,14 @@ window.addEventListener('DOMContentLoaded', () => {
 
 // কন্ট্রোলবার এবং সাইডবার অটো-হাইড লজিক
 function resetTimer() {
-    // মোবাইল ডিভাইসের পোর্ট্রেট (লম্বালম্বি) মোড সনাক্তকরণ
     const isPortrait = isMobileDevice() && window.innerHeight > window.innerWidth && !document.fullscreenElement;
 
-    // পোর্ট্রেট বাদে (ডেস্কটপ, টিভি এবং মোবাইলের ল্যান্ডস্কেপ মোডে) সাইডবার এবং কন্ট্রোলবার শো করানো
     if (sidebar) sidebar.classList.remove('hidden');
     if (controls) controls.classList.remove('hidden');
     if (mobileModeToggleBtn) mobileModeToggleBtn.classList.remove('hidden');
 
     clearTimeout(timeout);
     timeout = setTimeout(() => {
-        // মোবাইল পোর্ট্রেট মোড না হলে নির্দিষ্ট সময়ের পর সাইডবার এবং কন্ট্রোলবার হাইড করা হবে
         if (!isPortrait) {
             if (sidebar) sidebar.classList.add('hidden');
             if (controls) controls.classList.add('hidden');
@@ -380,7 +377,6 @@ if (video) video.addEventListener('click', resetTimer);
 document.addEventListener('mousemove', resetTimer);
 document.addEventListener('touchstart', resetTimer);
 
-// ওরিয়েন্টেশন পরিবর্তনের সাথে সাথে সাইডবার এবং কন্ট্রোলবার রিসেট করা
 window.addEventListener('orientationchange', () => setTimeout(resetTimer, 200));
 window.addEventListener('resize', resetTimer);
 

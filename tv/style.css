@@ -627,7 +627,6 @@ input[type=range] {
 
 /* =======================================================
    ৬. মোবাইল ল্যান্ডস্কেপ (স্ক্রিন ঘোরানো) মোড
-   এখানে স্ক্রিন কাত করলে প্রিমিয়াম ভিডিও প্লেয়ার স্টাইল আসবে
    ======================================================= */
 @media (max-width: 1024px) and (orientation: landscape) {
     html, body {
@@ -661,7 +660,7 @@ input[type=range] {
         object-fit: contain; 
     }
 
-    /* সাইডবার প্যানেল - এটি ভাসমান সাইড ওভারলে হিসেবে বামে থাকবে */
+    /* সাইডবার প্যানেল - ওভারলে হিসেবে বামপাশে ভাসমান থাকবে */
     .sidebar {
         position: absolute !important;
         left: 20px !important;
@@ -711,7 +710,7 @@ input[type=range] {
         left: 10px; 
     }
 
-    /* ল্যান্ডস্কেপ মোডে চ্যানেল লিস্টটি সুন্দর করে সাজানো */
+    /* ল্যান্ডস্কেপ মোডে চ্যানেল লিস্ট */
     .channel-container {
         display: flex;
         flex-direction: column;
@@ -720,29 +719,46 @@ input[type=range] {
     }
 
     .channel-item {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        height: 52px;
-        padding: 6px 10px;
-        margin-bottom: 0;
-        width: 100%;
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        height: 56px !important; /* উচ্চতা বাড়িয়ে দেওয়া হয়েছে যাতে কনটেন্ট সুন্দরভাবে ধরে */
+        padding: 6px 10px !important;
+        margin-bottom: 0 !important;
+        width: 100% !important;
         border-radius: 8px !important;
+        box-sizing: border-box !important;
     }
     
+    /* ল্যান্ডস্কেপ মোডে লোগোর আকার পরিবর্তন প্রতিরোধী মানসমূহ */
     .channel-item img { 
-        width: 44px; 
-        height: 30px; 
+        width: 52px !important; 
+        height: 36px !important; 
+        object-fit: contain !important; /* লোগোর অরজিনাল রেশিও বজায় রাখবে */
+        background: #ffffff !important;
+        padding: 2px !important; /* বাড়তি জায়গা খালি রেখে ক্লাম্পিং এড়ানো */
+        border-radius: 5px !important;
         margin-right: 10px !important; 
         margin-bottom: 0 !important;
+        flex-shrink: 0 !important;
     }
     
     .channel-item .channel-name { 
-        font-size: 12px; 
-        text-align: left;
+        font-size: 13px !important; 
+        text-align: left !important;
+        padding-right: 40px !important; /* লাইভ ব্যাজের ওভারল্যাপিং এড়ানোর জন্য */
+    }
+
+    /* লাইভ ব্যাজ ল্যান্ডস্কেপ পজিশনিং */
+    .channel-item .live-indicator {
+        position: absolute !important;
+        right: 8px !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        margin: 0 !important;
     }
     
-    /* ল্যান্ডস্কেপ মোডে ভাসমান কন্ট্রোলবার প্রদর্শন */
+    /* ল্যান্ডস্কেপ মোডে ভাসমান কন্ট্রোলবার */
     .bottom-right-controls { 
         display: flex !important; 
         bottom: 20px;
