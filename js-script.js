@@ -81,35 +81,40 @@ let currentNumber = "";
 const hardwareId = generateHardwareFingerprint();
 const deviceModel = detectDeviceModel();
 
-// ওয়ান-টাইম লগইন অটো-রিডাইরেক্ট চেক
-window.addEventListener('DOMContentLoaded', () => {
-    // ৩.৫ সেকেন্ড পর স্প্ল্যাশ স্ক্রিন রিমুভ হবে
-    setTimeout(() => {
-        const splash = document.getElementById('app-splash');
-        if (splash) {
-            splash.classList.add('splash-fade-out');
-            setTimeout(() => {
-                splash.remove();
-                // স্প্ল্যাশ স্ক্রিন যাওয়ার পর সেশন চেক
-                const isLoggedIn = localStorage.getItem('isLoggedIn');
-                if (isLoggedIn === 'true') {
-                    window.location.href = 'home-page/home.html';
-                } else {
-                    // প্রথম ইনপুট এলিমেন্টে ফোকাস সেট
-                    whatsappInput.focus();
-                }
-            }, 800);
-        }
-    }, 3500);
-});
+/* ========================================================
+   ওয়ান-টাইম লগইন অটো-রিডাইরেক্ট ও স্প্ল্যাশ স্ক্রিন চেক
+   ======================================================== */
+const isLoggedIn = localStorage.getItem('isLoggedIn');
 
-// কাস্টম অ্যালার্ট মডাল ফাংশন (ডিফল্ট alert() এর পরিবর্তে)
+if (isLoggedIn === 'true') {
+    // ব্যবহারকারী লগইন করা থাকলে সরাসরি হোম পেজে রিডাইরেক্ট হবে
+    window.location.href = 'home-page/home.html';
+} else {
+    // লগইন করা না থাকলে স্প্ল্যাশ স্ক্রিন অ্যানিমেশনটি সম্পন্ন হবে
+    window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+            const splash = document.getElementById('app-splash');
+            if (splash) {
+                splash.classList.add('splash-fade-out');
+                setTimeout(() => {
+                    splash.remove();
+                    // প্রথম ইনপুট এলিমেন্টে ফোকাস সেট
+                    if (whatsappInput) {
+                        whatsappInput.focus();
+                    }
+                }, 800);
+            }
+        }, 3500);
+    });
+}
+
+// কাস্টম অ্যালার্ট মডাল ফাংশন
 let alertCallback = null;
 function showAlert(title, message, callback = null) {
     alertTitle.innerText = title;
     alertMessage.innerText = message;
     customAlert.classList.remove('hidden');
-    alertOkBtn.focus(); // টিভি রিমোটের সুবিধার্থে সরাসরি ওকে বাটনে ফোকাস নিয়ে যাওয়া
+    alertOkBtn.focus(); 
     alertCallback = callback;
 }
 
@@ -136,7 +141,7 @@ loginBtn.addEventListener('click', async () => {
     try {
         const dbRef = ref(db);
         
-        // সিকিউরিটি ১: এই নির্দিষ্ট ডিভাইসটি অলরেডি অন্য কোনো নম্বরের সাথে লকড কি না চেক
+        // সিকিউরিটি ১: ডিভাইস লক চেক
         const deviceSnapshot = await get(child(dbRef, `hardware_locks/${hardwareId}`));
         
         if (deviceSnapshot.exists()) {
@@ -149,7 +154,7 @@ loginBtn.addEventListener('click', async () => {
                 return;
             }
         } else {
-            // সিকিউরিটি ২: এই নম্বরটি অন্য কোনো ডিভাইসে ব্যবহার করা হচ্ছে কি না চেক
+            // সিকিউরিটি ২: নম্বর লক চেক
             const numberSnapshot = await get(child(dbRef, `secure_users/${currentNumber}`));
             if (numberSnapshot.exists()) {
                 const registeredHardware = numberSnapshot.val().hardwareId;
@@ -163,7 +168,7 @@ loginBtn.addEventListener('click', async () => {
             }
         }
 
-        // সিকিউরিটি ভ্যালিডেশন পাস হলে ওটিপি জেনারেশন
+        // ওটিপি জেনারেশন
         generatedOTP = Math.floor(1000 + Math.random() * 9000).toString();
         
         loginCard.classList.add('hidden');
@@ -212,7 +217,7 @@ async function executeFinalSecureLogin() {
         localStorage.setItem('isLoggedIn', 'true');
         localStorage.setItem('userNumber', currentNumber);
         
-        window.location.href = 'home-page/index.html';
+        window.location.href = 'home-page/home.html';
     } catch (error) {
         showAlert("সংরক্ষণ ত্রুটি", "লগইন তথ্য সংরক্ষণ করা সম্ভব হয়নি। আবার চেষ্টা করুন।");
     }
@@ -225,7 +230,6 @@ const focusableElements = [whatsappInput, loginBtn, alertOkBtn];
 let currentFocusIndex = 0;
 
 document.addEventListener('keydown', (e) => {
-    // যদি কাস্টম অ্যালার্ট মডালটি দৃশ্যমান থাকে, ফোকাস কেবল ওখানেই সীমাবদ্ধ থাকবে
     if (!customAlert.classList.contains('hidden')) {
         if (e.key === 'Enter' || e.key === 'Ok' || e.keyCode === 13) {
             alertOkBtn.click();
@@ -234,9 +238,8 @@ document.addEventListener('keydown', (e) => {
         return;
     }
 
-    // নেভিগেশন কি কোড হ্যান্ডলিং (Arrow Up/Down, Remote Keys)
     if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
-        currentFocusIndex = (currentFocusIndex + 1) % 2; // শুধুমাত্র প্রথম ২টি ফিল্ডে ঘুরবে
+        currentFocusIndex = (currentFocusIndex + 1) % 2; 
         focusableElements[currentFocusIndex].focus();
         e.preventDefault();
     } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
@@ -244,7 +247,6 @@ document.addEventListener('keydown', (e) => {
         focusableElements[currentFocusIndex].focus();
         e.preventDefault();
     } else if (e.key === 'Enter' || e.keyCode === 13) {
-        // যদি ইনপুটে থাকা অবস্থায় এন্টার চাপ দেওয়া হয়, তাহলে সাবমিট হবে
         if (document.activeElement === whatsappInput) {
             loginBtn.click();
             e.preventDefault();
