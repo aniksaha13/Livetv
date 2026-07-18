@@ -1,6 +1,28 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ABOX BDIX - Professional</title>
+    <link class="favicon" rel="icon" type="image/png" href="https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/icon/tv.png">
+    
+    <!-- CSS Link -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- HLS.js for stream playback -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.4.12/hls.min.js"></script>
+    <!-- Blueimp MD5 library for generating secure tokens -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.19.0/js/md5.min.js"></script>
+    <!-- Icons helper -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+</head>
+<body>
+
+<!-- সুরক্ষা স্ক্রিপ্ট (টোকেন চেক) -->
 <script>
     (function() {    
         const currentToken = sessionStorage.getItem('allowed_entry');
@@ -24,32 +46,18 @@
     })();
 </script>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ABOX BDIX - Professional</title>
-    <link class="favicon" rel="icon" type="image/png" href="https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/icon/tv.png">
-    <!-- CSS Link -->
-    <link rel="stylesheet" href="style.css">
-    <!-- HLS.js for stream playback -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.4.12/hls.min.js"></script>
-    <!-- Blueimp MD5 library for generating secure tokens -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.19.0/js/md5.min.js"></script>
-    <!-- Icons helper -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-</head>
-<body>
-
+<!-- ===== মূল প্লেয়ার ===== -->
 <div class="player-wrapper" id="playerWrapper">
     <!-- মোবাইল টপ হেডার -->
     <div class="mobile-top-header" id="mobileTopHeader">
         <i class="fa-solid fa-tv"></i> <span class="brand-white">ABOX</span><span class="brand-accent">BDIX</span>
     </div>
 
-    <!-- ভিডিও এবং মোবাইল ফুলস্ক্রিন কন্টেইনার -->
+    <!-- ভিডিও কন্টেইনার -->
     <div class="video-container">
         <video id="video" playsinline webkit-playsinline></video>
         
-        <!-- লোডারটি এখানে রাখা হলো যাতে ভিডিওর মাঝখানে ঠিকঠাক বসে -->
+        <!-- লোডার -->
         <div class="loader-overlay" id="loaderOverlay">
             <div class="heart-loader">
                 <span>&#10084;</span>
@@ -63,6 +71,7 @@
         </button>
     </div>
 
+    <!-- এরর ওভারলে -->
     <div class="error-overlay" id="errorOverlay">
         <div class="error-card">
             <button class="close-error-btn" id="closeErrorBtn">&times;</button>
@@ -75,12 +84,13 @@
         </div>
     </div>
 
-    <!-- সাইডবার / মোবাইল চ্যানেল গ্রিড -->
+    <!-- সাইডবার / চ্যানেল তালিকা -->
     <div class="sidebar" id="sidebar">
-        <div class="sidebar-title">TV List</div>
+        <div class="sidebar-title"><i class="fa-solid fa-list"></i> TV List</div>
         <div class="channel-container" id="channelList"></div>
     </div>
     
+    <!-- কন্ট্রোলস -->
     <div class="bottom-right-controls" id="controls">
         <i class="fa fa-volume-up"></i>
         <input type="range" id="volume" min="0" max="1" step="0.1" value="1">
@@ -88,7 +98,7 @@
     </div>
 </div>
 
-<!-- JS Link -->
+<!-- JavaScript -->
 <script src="app.js"></script>
 </body>
 </html>
