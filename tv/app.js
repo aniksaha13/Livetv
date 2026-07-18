@@ -1,4 +1,19 @@
-// DOM এলিমেন্টসমূহ
+// ===== Firebase Configuration (আপনার নিজের কনফিগ দিয়ে প্রতিস্থাপন করুন) =====
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+    projectId: "YOUR_PROJECT",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+};
+
+// Firebase Initialize
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+
+// ===== DOM এলিমেন্টসমূহ =====
 const video = document.getElementById('video');
 const sidebar = document.getElementById('sidebar');
 const controls = document.getElementById('controls');
@@ -14,111 +29,60 @@ let hlsInstance = null;
 let serverTimeOffset = 0;
 let currentSelectedIndex = 0;
 let channels = [];
-let fullscreenState = 0; // ০: নরমাল, ১: ফুলস্ক্রিন (ফিট ছাড়া), ২: ফুলস্ক্রিন (সম্পূর্ণ ফিট)
-
-// চ্যানেল লিস্ট
-const CHANNELS = [
-  { "id": "ananda-tv", "name": "Ananda TV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/anandatv.png" },
-  { "id": "asian-tv", "name": "Asian TV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/asiantv.png" },
-  { "id": "atn-bangla", "name": "ATN Bangla", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/atnbangla.png" },
-  { "id": "atn-bangla-uk", "name": "ATN Bangla UK", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/atnbanglauk.png" },
-  { "id": "atn-news", "name": "ATN News", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/atnnews.png" },
-  { "id": "ayna-tv", "name": "Ayna TV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/aynatv.png" },
-  { "id": "azan-tv-canada", "name": "Azan TV Canada", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/azantvcanada.png" },
-  { "id": "akash-8-tv", "name": "AKASH 8 TV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/aakash-aath-tv.png" },
-  { "id": "colors-bangla", "name": "Colors Bangla", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/Colors_Bangla.png" },
-  { "id": "enter-10", "name": "ENTERR 10", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/ENTERR_10.png" },
-  { "id": "jalsha-movies-hd", "name": "Jalsha Movies", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/jalshamovies.png" },
-  { "id": "kolkata-tv", "name": "Kolkata TV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/Kolkata_TV.png" },
-  { "id": "rongeen-tv", "name": "Rongeen TV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/Rongeen_TV.png" },
-  { "id": "star-jalsa-hd", "name": "Star Jalsha", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/starjalsha.png" },
-  { "id": "tv9-bangla", "name": "TV9 Bangla", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/TV9_Bangla.png" },
-  { "id": "zee-bangla", "name": "Zee Bangla", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/zeebangla.png" },
-  { "id": "zee-24-ghanta", "name": "ZEE 24 GHANTA", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/ZEE_24_GHANTA.png" },
-  { "id": "banglavision", "name": "Banglavision", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/banglavision.png" },
-  { "id": "bijoy-tv", "name": "BIJOY TV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/BIJOY_TV_Logo_BD.png" },
-  { "id": "boishakhi-tv", "name": "Boishakhi TV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/boishakhitv.png" },
-  { "id": "BTV", "name": "BTV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/btv.png" },
-  { "id": "sngsd-bangladesh", "name": "Sngsd Bangladesh", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/sngsd-bangladesh.png" },
-  { "id": "channel-1", "name": "Channel 1", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/channel1.png" },
-  { "id": "channel-24", "name": "Channel 24", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/channel24.png" },
-  { "id": "channel-9", "name": "Channel 9", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/channel9.png" },
-  { "id": "channel-s-bd", "name": "Channel S BD", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/channelsbd.png" },
-  { "id": "channel-s-uk", "name": "Channel S UK", "logo":  "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/channelsuk.png" },
-  { "id": "channeli", "name": "Channel i", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/channeli.png" },
-  { "id": "dbc-news", "name": "DBC News", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/dbcnews.png" },
-  { "id": "deen-tv-uk", "name": "Deen TV UK", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/deentvuk.png" },
-  { "id": "desh-tv", "name": "Desh TV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/deshtv.png" },
-  { "id": "deepto-tv", "name": "Deepto TV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/Deepto-TV.png" },
-  { "id": "deshebideshe-tv-canada", "name": "Deshebideshe TV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/deshebideshetv.png" },
-  { "id": "deshi-tv", "name": "Deshi TV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/deshitv.png" },
-  { "id": "ekattor-tv", "name": "Ekattor TV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/ekattortv.png" },
-  { "id": "ekhon-tv", "name": "Ekhon TV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/ekhontv.png" },
-  { "id": "ekushey-tv", "name": "Ekushey TV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/ekusheytv.png" },
-  { "id": "ep-tv", "name": "EP TV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/eptv.png" },
-  { "id": "galaxy-tv", "name": "Galaxy TV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/galaxytv.png" },
-  { "id": "gazi-television-gtv", "name": "GTV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/gtv.png" },
-  { "id": "g-series", "name": "G SERIES", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/G-SERIES.png" },
-  { "id": "global-tv-bangladesh", "name": "Global TV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/globaltv.png" },
-  { "id": "green-tv", "name": "Green TV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/greentv.png" },
-  { "id": "iqra-bangla-tv-uk", "name": "Iqra Bangla TV UK", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/iqrabanglatvuk.png" },
-  { "id": "islam-ch-bangla", "name": "Islam Ch Bangla", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/islamchbangla.png" },
-  { "id": "jago-news-24", "name": "Jago News 24", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/jagonews24.png" },
-  { "id": "jamuna", "name": "Jamuna", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/jamuna.png" },
-  { "id": "madani-ch-bangla", "name": "Madani Ch Bangla", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/madanichbangla.png" },
-  { "id": "makkah-live", "name": "Makkah Live", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/makkahlive.png" },
-  { "id": "makkah-tv", "name": "Makkah TV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/makkahtv.png" },
-  { "id": "maasranga-tv", "name": "Maasranga TV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/Maasranga_TV.png" },
-  { "id": "medina-live", "name": "Medina Live", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/medinalive.png" },
-  { "id": "mohona-tv", "name": "Mohona TV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/mohonatv.png" },
-  { "id": "movie-bangla", "name": "Movie Bangla", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/moviebangla.png" },
-  { "id": "my-tv", "name": "MY TV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/mytv.png" },
-  { "id": "news24-tv", "name": "News 24 TV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/news24tv.png" },
-  { "id": "nexus-tv", "name": "Nexus TV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/nexustv.png" },
-  { "id": "ntv", "name": "NTV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/ntv.png" },
-  { "id": "peace-tv-bangla", "name": "Peace TV Bangla", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/peacetvbangla.png" },
-  { "id": "rtv", "name": "RTV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/rtv.png" },
-  { "id": "rajdhani-tv", "name": "RAJDHANI TV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/rajdhanitv.png" },
-  { "id": "sa-tv", "name": "SA TV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/satv.png" },
-  { "id": "somoytv", "name": "Somoy TV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/somoytv.png" },
-  { "id": "star-news", "name": "STAR NEWS", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/STAR-NEWS.png" },
-  { "id": "srk-tv", "name": "SRK TV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/SRK-TV.png" },
-  { "id": "T_Sports", "name": "T Sports", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/tsports.png" },
-  { "id": "a-sports", "name": "A Sports", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/asports.png" },
-  { "id": "Star_Spts_1", "name": "Star Sports 1", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/starsports1.png" },
-  { "id": "Star_Sports_2", "name": "Star Sports 2", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/starsports2.png" },
-  { "id": "Sony_Sports_Ten_1", "name": "Sony Sports Ten 1", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/sonysportsten1.png" },
-  { "id": "Sony_Sports_Ten_2", "name": "Sony Sports Ten 2", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/sonysportsten2.png" },
-  { "id": "Sony_Sports_Ten_5", "name": "Sony Sports Ten 5", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/sonysportsten5.png" },
-  { "id": "Star-Sports-Select-1", "name": "Star Sports Select", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/Star-Sports-Select-1.png" },
-  { "id": "star-Sports-Select-2", "name": "Star Sports Select 2", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/star-Sports-Select-2.png" },
-  { "id": "Ten_Cricket_HD", "name": "Ten Cricket HD", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/tencrickethd.png" },
-  { "id": "Ptv_sports", "name": "Ptv Sports", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/ptvsports.png" },
-  { "id": "Fox_Sports_2", "name": "Fox Sports", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/foxsports.png" },
-  { "id": "WILLOW_LIVE", "name": "WILLOW LIVE", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/willowlive.png" },
-  { "id": "Bein_Sports_2", "name": "Bein Sports", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/beinsports.png" }
-];
+let fullscreenState = 0;
 
 // সার্ভার লিঙ্কসমূহ
 const PREMIUM_SERVER_URL = "https://iptv.aboxbdix.workers.dev";
 const IPTV_SERVER_URL = "https://iptv.aboxbdix.workers.dev";
-const SECRET_KEY = "my_super_secret_tv_key_2026"; 
+const SECRET_KEY = "my_super_secret_tv_key_2026";
 
-// প্রিমিয়াম চ্যানেলসমূহ
-const premiumChannelIds = [ 'A-Sports', 'Star-Sports-Select-1', 'star-Sports-Select-2', 'Sony-Ten-1', 'Sony-Ten-2', 'Sony-Ten-5', 'STAR-SPORTS-1', 'Star-Sports-2', 'colors-bangla', 'jalsha-movies-hd', 'star-jalsa-hd', 'zee-bangla', 'BTV'];
+// প্রিমিয়াম চ্যানেল আইডি
+const premiumChannelIds = [
+    'A-Sports', 'Star-Sports-Select-1', 'star-Sports-Select-2',
+    'Sony-Ten-1', 'Sony-Ten-2', 'Sony-Ten-5', 'STAR-SPORTS-1',
+    'Star-Sports-2', 'colors-bangla', 'jalsha-movies-hd',
+    'star-jalsa-hd', 'zee-bangla', 'BTV'
+];
 
-// উন্নত মোবাইল ও স্মার্ট টিভি ডিভাইস সনাক্তকরণ
+// ===== Firebase থেকে চ্যানেল লিস্ট লোড করা =====
+async function fetchChannels() {
+    try {
+        const snapshot = await database.ref('channels').once('value');
+        const data = snapshot.val();
+        if (data && Array.isArray(data) && data.length > 0) {
+            channels = data;
+            console.log('✅ Firebase থেকে চ্যানেল লোড হয়েছে:', channels.length);
+        } else {
+            console.warn('⚠️ Firebase-এ কোনো চ্যানেল পাওয়া যায়নি, ফলব্যাক চ্যানেল ব্যবহার করা হচ্ছে।');
+            // ফলব্যাক চ্যানেল (যদি Firebase-এ ডেটা না থাকে)
+            channels = getFallbackChannels();
+        }
+    } catch (e) {
+        console.error('❌ Firebase থেকে ডেটা আনতে ব্যর্থ:', e);
+        showError();
+        channels = getFallbackChannels();
+    }
+}
+
+// ফলব্যাক চ্যানেল (যদি Firebase কাজ না করে)
+function getFallbackChannels() {
+    return [
+        { "id": "ntv", "name": "NTV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/ntv.png" },
+        { "id": "rtv", "name": "RTV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/rtv.png" },
+        { "id": "somoytv", "name": "Somoy TV", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/somoytv.png" },
+        { "id": "channeli", "name": "Channel i", "logo": "https://raw.githubusercontent.com/ryvoxtb/image/refs/heads/main/tv-chanel-logo/channeli.png" }
+    ];
+}
+
+// ===== অন্যান্য ফাংশন =====
+
+// উন্নত মোবাইল ডিভাইস সনাক্তকরণ
 function isMobileDevice() {
     const ua = navigator.userAgent.toLowerCase();
-    
-    // অ্যান্ড্রয়েড টিভি, ফায়ার টিভি, বা যেকোনো স্মার্ট টিভি ডিটেক্ট করা
     const isTV = /tv|smarttv|googletv|appletv|tizen|webos|hbbtv|netcast|viera|firetv|boxee|rokutv|mediaroom|slcomm|digian|xtreamer/i.test(ua);
-    if (isTV) return false; // টিভি হলে মোবাইল লেআউট ব্যবহার করবে না
-    
-    // শুধুমাত্র মোবাইল ফোন এবং ট্যাবলেট
+    if (isTV) return false;
     const isMobileUA = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(ua);
     const hasTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-    
     return isMobileUA && hasTouch && (window.innerWidth <= 768);
 }
 
@@ -134,17 +98,7 @@ function getChannelPath(id) {
     return pathMap[id] || `/${id.toUpperCase()}/index.fmp4.m3u8`;
 }
 
-// চ্যানেল ডাটা লোড করা
-async function fetchChannels() {
-    try {
-        channels = CHANNELS;
-    } catch (e) {
-        console.error(e);
-        showError();
-    }
-}
-
-// আকামাই সার্ভার টাইম ট্র্যাকিং
+// আকামাই টাইম সিঙ্ক
 async function syncServerTime() {
     try {
         const start = Date.now();
@@ -163,7 +117,7 @@ async function syncServerTime() {
     }
 }
 
-// টোকেন ও লিংক জেনারেটর
+// টোকেন জেনারেটর
 function generateIPTVUrl(channelId) {
     const synchronizedTimeMs = Date.now() + serverTimeOffset;
     const timeInSeconds = Math.floor(synchronizedTimeMs / 1000);
@@ -190,7 +144,7 @@ function buildChannelList() {
     });
 }
 
-// চ্যানেল প্লে করার মূল ফাংশন
+// চ্যানেল প্লে করা
 async function selectAndPlay(index) {
     if (channels.length === 0) return;
     currentSelectedIndex = index;
@@ -215,7 +169,6 @@ async function selectAndPlay(index) {
             const channelPath = getChannelPath(channel.id);
             const response = await fetch(`${PREMIUM_SERVER_URL}/api/get-link?path=${encodeURIComponent(channelPath)}`);
             if (!response.ok) throw new Error('Premium API response failed');
-            
             const serverData = await response.json();
             playHLS(serverData.link);
         } else {
@@ -229,7 +182,7 @@ async function selectAndPlay(index) {
     }
 }
 
-// HLS ভিডিও প্লেব্যাক সিস্টেম (অটোপ্লে ব্লকিং প্রতিরোধের জন্য মডিফাইড)
+// HLS প্লেব্যাক
 function playHLS(url) {
     if (hlsInstance) {
         hlsInstance.destroy();
@@ -250,11 +203,8 @@ function playHLS(url) {
             }
         });
         
-        // প্রথমে স্বাভাবিকভাবে প্লে করার চেষ্টা করবে, ব্রাউজার ব্লক করলে মিউটেড অবস্থায় প্লে করবে
         video.play()
-            .then(() => {
-                video.muted = false;
-            })
+            .then(() => { video.muted = false; })
             .catch(() => {
                 video.muted = true;
                 video.play().catch(() => {});
@@ -262,9 +212,7 @@ function playHLS(url) {
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
         video.src = url;
         video.play()
-            .then(() => {
-                video.muted = false;
-            })
+            .then(() => { video.muted = false; })
             .catch(() => {
                 video.muted = true;
                 video.play().catch(() => {});
@@ -272,7 +220,7 @@ function playHLS(url) {
     }
 }
 
-// ব্রাউজারে ব্যবহারকারীর প্রথম স্পর্শ/ক্লিকেই অডিও স্বয়ংক্রিয়ভাবে চালু করার ট্রিগার
+// অটোপ্লে সাউন্ড ইম্প্রুভ
 function enableAutoplaySound() {
     const handleFirstInteraction = () => {
         if (video && video.muted) {
@@ -288,7 +236,7 @@ function enableAutoplaySound() {
     document.addEventListener('touchstart', handleFirstInteraction);
 }
 
-// ইভেন্ট লিসেনারস
+// ইভেন্ট লিসেনার
 if (video) {
     video.addEventListener('waiting', () => showLoader(true));
     video.addEventListener('playing', () => { showLoader(false); hideError(); });
@@ -298,17 +246,15 @@ if (video) {
 function showLoader(status) {
     if (loader) loader.style.display = status ? 'flex' : 'none';
 }
-
 function showError() {
     showLoader(false);
     if (errorOverlay) errorOverlay.style.display = 'flex';
 }
-
 function hideError() {
     if (errorOverlay) errorOverlay.style.display = 'none';
 }
 
-// অ্যাপ অটো স্টার্ট
+// অ্যাপ স্টার্ট
 async function autoStartApp() {
     if (video) {
         video.muted = false;
@@ -317,10 +263,10 @@ async function autoStartApp() {
     const volInput = document.getElementById('volume');
     if (volInput) volInput.value = 1.0;
 
-    enableAutoplaySound(); // সাউন্ড পলিসি বাইপাস ফাংশন অ্যাক্টিভেট করা হলো
+    enableAutoplaySound();
     await syncServerTime();
-    await fetchChannels(); 
-    buildChannelList();    
+    await fetchChannels();   // Firebase থেকে ডেটা নেয়া হবে
+    buildChannelList();     // চ্যানেল লিস্ট রেন্ডার
     if (channels.length > 0) {
         selectAndPlay(0);      
     }
@@ -331,7 +277,7 @@ window.addEventListener('DOMContentLoaded', () => {
     autoStartApp();
 });
 
-// রিমোট কন্ট্রোল, মোবাইল বাটন এবং সাইডবার অটো-হাইড লজিক
+// রিমোট কন্ট্রোল অটো-হাইড
 function resetTimer() {
     const isPortrait = isMobileDevice() && window.innerHeight > window.innerWidth && !document.fullscreenElement;
     
@@ -351,14 +297,13 @@ if (video) video.addEventListener('click', resetTimer);
 document.addEventListener('mousemove', resetTimer);
 document.addEventListener('touchstart', resetTimer);
 
-// কীবোর্ড এবং টিভির রিমোট কন্ট্রোল বাইন্ডিংস
+// কীবোর্ড শর্টকাট
 document.addEventListener('keydown', (e) => {
     if (errorOverlay && errorOverlay.style.display === 'flex') {
         if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'Escape') {
             hideError();
         }
     }
-
     if (channels.length === 0) return;
 
     if (e.key === 'ArrowDown') {
@@ -401,7 +346,7 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// ডাবল স্টেজ ফুলস্ক্রিন ও অটো-রোটেশন মেকানিজম (Contain -> Stretch -> Normal)
+// ফুলস্ক্রিন টগল
 async function handleFullscreenCycle() {
     const wrapper = document.getElementById('playerWrapper');
     if (!wrapper || !video) return;
@@ -413,7 +358,6 @@ async function handleFullscreenCycle() {
             } else if (wrapper.webkitRequestFullscreen) {
                 await wrapper.webkitRequestFullscreen();
             }
-            
             if (screen.orientation && screen.orientation.lock) {
                 await screen.orientation.lock('landscape').catch(() => {});
             }
@@ -436,7 +380,6 @@ async function handleFullscreenCycle() {
     }
 }
 
-// ওরিয়েন্টেশন ও ফুলস্ক্রিন স্টেজ রিলিজ লিসেনার
 const releaseOrientation = () => {
     if (!document.fullscreenElement && !document.webkitFullscreenElement) {
         if (screen.orientation && screen.orientation.unlock) {
@@ -449,7 +392,7 @@ const releaseOrientation = () => {
 document.addEventListener('fullscreenchange', releaseOrientation);
 document.addEventListener('webkitfullscreenchange', releaseOrientation);
 
-// স্লাইডার ভলিউম ইভেন্ট
+// ভলিউম স্লাইডার
 const volumeSlider = document.getElementById('volume');
 if (volumeSlider) {
     volumeSlider.oninput = (e) => {
@@ -464,7 +407,7 @@ if (fullscreenBtn) fullscreenBtn.onclick = handleFullscreenCycle;
 if (mobileFsBtn) mobileFsBtn.onclick = handleFullscreenCycle;
 if (closeErrorBtn) closeErrorBtn.onclick = hideError;
 
-// সিকিউরিটি বাইন্ডিং
+// সিকিউরিটি
 document.addEventListener('contextmenu', function(e) {
     e.preventDefault();
 });
@@ -476,3 +419,5 @@ document.addEventListener('keydown', function(e) {
         return false;
     }
 });
+
+console.log('✅ ABOX BDIX অ্যাপ সফলভাবে লোড হয়েছে!');
