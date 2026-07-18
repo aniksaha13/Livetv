@@ -345,7 +345,7 @@ input[type=range] { accent-color: #0099ff; cursor: pointer; }
     .channel-item img {
         width: 100%;
         max-width: 80px; 
-        aspect-ratio: 16 / 9; /* লোগো সুন্দর দেখানোর জন্য ১৬:৯ করা হয়েছে */
+        aspect-ratio: 16 / 9;
         height: auto;
         object-fit: contain;
         background: #fff;
