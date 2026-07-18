@@ -100,8 +100,8 @@ const CHANNELS = [
 ];
 
 // সার্ভার লিঙ্কসমূহ
-const PREMIUM_SERVER_URL = "https://aboxbdix.mdabdullahsheikh017-924.workers.dev";
-const IPTV_SERVER_URL = "https://aboxbdix-main-server.mdabdullahsheikh017-924.workers.dev";
+const PREMIUM_SERVER_URL = "https://iptv.aboxbdix.workers.dev";
+const IPTV_SERVER_URL = "https://iptv.aboxbdix.workers.dev";
 const SECRET_KEY = "my_super_secret_tv_key_2026"; 
 
 // প্রিমিয়াম চ্যানেলসমূহ
